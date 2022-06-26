@@ -5,6 +5,9 @@ import Row from '../components/Row';
 import { Movie } from '../typings';
 import requests from '../utils/requests';
 import Header from './../components/Header';
+import useAuth from '../hooks/useAuth';
+import Loading from './../components/Loading';
+
 interface Props {
   netflixOriginals: Movie[];
   trendingNow: Movie[];
@@ -17,7 +20,7 @@ interface Props {
   // products: Product[]
 }
 
-const Home =  ({
+const Home = ({
   netflixOriginals,
   trendingNow,
   topRated,
@@ -26,8 +29,12 @@ const Home =  ({
   horrorMovies,
   romanceMovies,
   documentaries,
-}:
-Props) => {
+}: Props) => {
+  const { loading } = useAuth();
+  if (loading)
+    return (
+      <Loading/>
+    );
   return (
     <div
       className='relative m h-screen bg-gradient-to-b from-gray-900/10 to-[#010511] 
@@ -41,18 +48,17 @@ Props) => {
       </Head>
       {/* Header */}
       <Header />
-      <main className="relative pl-4 pb-24 lg:space-y-24 lg:pl-16 ">
+      <main className='relative pl-4 pb-24 lg:space-y-24 lg:pl-10 overflow-x-hidden'>
         {/* Banner */}
-        <Banner netflixOriginals={netflixOriginals}/>
-        <section>
-          <Row title="Trending Now" movies={trendingNow}/>
-          <Row title="Top Rated" movies={topRated}/>
-          <Row title="Action Movies" movies={actionMovies}/>
-          <Row title="Comedy Movies" movies={comedyMovies}/>
-          <Row title="Horror Movies" movies={horrorMovies}/>
-          <Row title="Romance Movies" movies={romanceMovies}/>
-          <Row title="Documentaries Movies" movies={documentaries}/>
-
+        <Banner netflixOriginals={netflixOriginals} />
+        <section className='md:space-y-24'>
+          <Row title='Trending Now' movies={trendingNow} />
+          <Row title='Top Rated' movies={topRated} />
+          <Row title='Action Movies' movies={actionMovies} />
+          <Row title='Comedy Movies' movies={comedyMovies} />
+          <Row title='Horror Movies' movies={horrorMovies} />
+          <Row title='Romance Movies' movies={romanceMovies} />
+          <Row title='Documentaries Movies' movies={documentaries} />
         </section>
       </main>
       {/* Modal */}

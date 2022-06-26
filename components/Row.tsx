@@ -16,17 +16,20 @@ export default function Row({ title, movies }: Props) {
     setIsMoved(true);
     if (rowRef.current) {
       const { scrollLeft, clientWidth } = rowRef.current;
+      
       const scrollTo =
         direction === 'left'
           ? scrollLeft - clientWidth
           : scrollLeft + clientWidth;
       rowRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
-      console.log(scrollTo)
+      if (scrollTo === 0) {
+        setIsMoved(false);
+      }
     }
   };
 
   return (
-    <div className='h-40 space-y-0.5 md:space-y-2 my-20'>
+    <div className='h-40 space-y-0.5 md:space-y-2 '>
       <h2 className='w-56 cursor-pointer text-sm font-semibold text-[#e5e5e5] transition duration-200 hover:text-white md:text-2xl'>
         {title}
       </h2>
@@ -38,7 +41,7 @@ export default function Row({ title, movies }: Props) {
           onClick={() => handleClick('left')}
         />
         <div
-          className='flex items-center space-x-0.5 overflow-x-scroll scrollbar-hide md:space-x-2.5 md:p-2'
+          className='flex items-center space-x-3 overflow-x-scroll scrollbar-hide md:space-x-2.5 md:p-2'
           ref={rowRef}
         >
           {movies.map((movie) => (

@@ -1,29 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
-import useAuth from '../hooks/useAuth';
 import Loading from './../components/Loading';
+import useAuth from '../hooks/useAuth';
 
 type Props = {};
 
-function Login({}: Props) {
-  const [login, setLogin] = useState<boolean>(false);
-  const { loading, error,endLoadingScreen, signIn } = useAuth();
+function SignUp({}: Props) {
+  const [submit, setSubmit] = useState<boolean>(false);
+  const { loading, error, signUp } = useAuth();
 
+  const password = useRef({})
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm();
-  useEffect(()=>{
-    endLoadingScreen()
-  },[])
-console.log(error )
+  password.current = watch('password','')
+
   const onSubmit = (email: string, password: string) => {
-      signIn(email,password)
-   
+    signUp(email,password)
   };
 
   if(loading) return (
@@ -32,7 +31,7 @@ console.log(error )
   return (
     <div className='relative flex h-screen w-screen flex-col bg-black md:items-center md:justify-center md:bg-transparent'>
       <Head>
-        <title>Netflix - Login </title>
+        <title>Netflix - Register account</title>
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <Image
@@ -56,7 +55,7 @@ console.log(error )
           onSubmit(email, password),
         )}
       >
-        <h1 className='text-4xl font-semibold'>Sign In</h1>
+        <h1 className='text-4xl font-semibold'>Sign up</h1>
         <div className='space-y-4'>
           <label className='inline-block w-full'>
             <input
@@ -65,13 +64,10 @@ console.log(error )
               className={`input ${
                 errors.email && 'border-b-2 border-orange-500'
               }`}
-              {...register('email', {
-                required: 'Enter email ',
-                pattern: {
-                  value: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-                  message: 'Enter a valid email address ',
-                },
-              })}
+              {...register('email', { required: 'Enter email ', pattern: {
+                value :/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+                message: 'Enter a valid email address '
+              } })}
             />
             {errors.email && (
               <p className='p-1 text-[13px] font-light  text-orange-500'>
@@ -82,14 +78,10 @@ console.log(error )
           <label className='inline-block w-full'>
             <input
               type='password'
-              {...register('password', {
-                required: 'Enter password ',
-                minLength: {
-                  value: 6,
-                  message:
-                    'Your password must contain between 6 and 60 characters.',
-                },
-              })}
+              {...register('password', { required: 'Enter password ', minLength: {
+                value :6,
+                message: 'Your password must contain between 6 and 60 characters.'
+              } })}
               placeholder='Password'
               className={`input ${
                 errors.password && 'border-b-2 border-orange-500'
@@ -97,22 +89,46 @@ console.log(error )
             />
             {errors.password && (
               <p className='p-1 text-[13px] font-light  text-orange-500'>
-                {errors.password.message}
+                              {errors.password.message}
+              </p>
+            )}
+          </label>
+          <label className='inline-block w-full'>
+            <input
+              type='password'
+              {...register('confirmPassword', { required: 'Enter password confirmation', minLength: {
+                value :6,
+                message: 'Your password must contain between 6 and 60 characters.'
+              },
+              validate: value=>value === password.current  || 'The password confirmation does not match'
+            })}
+              placeholder='Confirm Password'
+              className={`input ${
+                errors.confirmPassword && 'border-b-2 border-orange-500'
+              }`}
+            />
+            {errors.confirmPassword && (
+              <p className='p-1 text-[13px] font-light  text-orange-500'>
+               {errors.confirmPassword.message}
               </p>
             )}
           </label>
         </div>
         <button
           className='w-full rounded bg-[#E50914] py-3 font-semibold'
-          onClick={() => setLogin(true)}
+          onClick={() => setSubmit(true)}
           type='submit'
         >
-          Sign In
+          Sign Up
         </button>
         <div className='text-[gray]'>
-          New to Netflix?{' '}
-          <Link href='/signup'>
-            <a className='text-white hover:underline'>Sign up now</a>
+          Do you have account?  {' '}
+          <Link
+          href="/login"
+          >
+            <a  className='text-white hover:underline'>
+            Login now
+            </a>
           </Link>
         </div>
       </form>
@@ -120,4 +136,4 @@ console.log(error )
   );
 }
 
-export default Login;
+export default SignUp;
